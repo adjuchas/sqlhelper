@@ -1,0 +1,3 @@
+[submodule "sqlhelper_react/src/base-bootstrap-react-lib"]
+	path = sqlhelper_react/src/base-bootstrap-react-lib
+	url = https://github.com/adjuchas/base-bootstrap-react-lib.git

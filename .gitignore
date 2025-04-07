@@ -1,0 +1,8 @@
+.vscode/
+.idea
+db.sqllite3
+*.class
+*~
+*.log
+sqlhelper_react/node_modules/
+sqlhelper_react/src/base-bootstrap-react-lib

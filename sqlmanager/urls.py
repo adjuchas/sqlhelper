@@ -1,8 +1,7 @@
-from django.urls import path
-from .views import DatabaseView, DatafieldView, DatatableView
+from rest_framework.routers import DefaultRouter
+from .views import SystemViewSet
 
-urlpatterns = [
-    path('database/', DatabaseView.as_view(), name='database'),
-    path('datatable/', DatatableView.as_view(), name='datatable'),
-    path('datafield/', DatafieldView.as_view(), name='datafield'),
-]
+router = DefaultRouter()
+router.register(r'systems', SystemViewSet, basename='system')
+
+urlpatterns = router.urls

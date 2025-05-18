@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* 确保根容器填满视口 */
+#root {
+  min-height: 100vh;
+}
+

@@ -8,54 +8,88 @@
 from django.db import models
 
 
-class Databasemanagement(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    database_name = models.CharField(db_column='DATABASE_NAME', unique=True, max_length=255)  # Field name made lowercase.
-    system_name = models.CharField(db_column='SYSTEM_NAME', unique=True, max_length=255)  # Field name made lowercase.
-    creator = models.CharField(db_column='CREATOR', max_length=255)  # Field name made lowercase.
-    created = models.CharField(db_column='CREATED', max_length=11)  # Field name made lowercase.
-    description = models.CharField(db_column='DESCRIPTION', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    surf = models.CharField(db_column='SURF', max_length=255)  # Field name made lowercase.
-    software = models.CharField(db_column='SOFTWARE', max_length=255)  # Field name made lowercase.
-    updated = models.CharField(db_column='UPDATED', max_length=11)  # Field name made lowercase.
+class ChangeLog(models.Model):
+    target_type = models.CharField(max_length=8)
+    target_id = models.IntegerField()
+    action = models.CharField(max_length=6)
+    description = models.TextField(blank=True, null=True)
+    performed_by = models.CharField(max_length=255, blank=True, null=True)
+    performed_at = models.DateTimeField()
 
     class Meta:
         managed = False
-        db_table = 'databasemanagement'
+        db_table = 'change_log'
 
 
-class Fieldmanagement(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    database_id = models.IntegerField(db_column='DATABASE_ID')  # Field name made lowercase.
-    table_id = models.IntegerField(db_column='TABLE_ID')  # Field name made lowercase.
-    field_name = models.CharField(db_column='FIELD_NAME', max_length=255)  # Field name made lowercase.
-    description = models.CharField(db_column='DESCRIPTION', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    type = models.CharField(db_column='TYPE', max_length=50)  # Field name made lowercase.
-    length = models.IntegerField(db_column='LENGTH', blank=True, null=True)  # Field name made lowercase.
-    creator = models.CharField(db_column='CREATOR', max_length=255)  # Field name made lowercase.
-    created = models.CharField(db_column='CREATED', max_length=11)  # Field name made lowercase.
-    updated = models.CharField(db_column='UPDATED', max_length=11)  # Field name made lowercase.
-    isnull = models.CharField(db_column='ISNULL', max_length=1)  # Field name made lowercase.
-    iskey = models.CharField(db_column='ISKEY', max_length=7, blank=True, null=True)  # Field name made lowercase.
-    default_value = models.CharField(db_column='DEFAULT_VALUE', max_length=50, blank=True, null=True)  # Field name made lowercase.
+class DatabaseManagement(models.Model):
+    system_id = models.IntegerField()
+    database_name = models.CharField(max_length=255)
+    creator = models.CharField(max_length=255)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    description = models.CharField(max_length=255, blank=True, null=True)
+    surf = models.CharField(max_length=255)
+    software = models.CharField(max_length=255)
 
     class Meta:
         managed = False
-        db_table = 'fieldmanagement'
+        db_table = 'database_management'
+        unique_together = (('system_id', 'database_name'),)
+
+
+class FieldEnum(models.Model):
+    field_id = models.IntegerField()
+    enum_value = models.CharField(max_length=50)
+    enum_label = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'field_enum'
+        unique_together = (('field_id', 'enum_value'),)
+
+
+class FieldManagement(models.Model):
+    database_id = models.IntegerField()
+    table_id = models.IntegerField()
+    field_name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    type = models.CharField(max_length=50)
+    length = models.PositiveIntegerField(blank=True, null=True)
+    creator = models.CharField(max_length=255)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    is_null = models.CharField(max_length=1)
+    is_key = models.CharField(max_length=7, blank=True, null=True)
+    default_value = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'field_management'
         unique_together = (('table_id', 'field_name'),)
 
 
-class Tablemanagement(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    database_id = models.IntegerField(db_column='DATABASE_ID')  # Field name made lowercase.
-    table_name = models.CharField(db_column='TABLE_NAME', max_length=255)  # Field name made lowercase.
-    description = models.CharField(db_column='DESCRIPTION', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    creator = models.CharField(db_column='CREATOR', max_length=255)  # Field name made lowercase.
-    created = models.CharField(db_column='CREATED', max_length=11)  # Field name made lowercase.
-    updated = models.CharField(db_column='UPDATED', max_length=11)  # Field name made lowercase.
-    status = models.CharField(db_column='STATUS', max_length=10)  # Field name made lowercase.
+class SystemManagement(models.Model):
+    system_name = models.CharField(unique=True, max_length=255)
+    owner = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'tablemanagement'
+        db_table = 'system_management'
+
+
+class TableManagement(models.Model):
+    database_id = models.IntegerField()
+    table_name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    creator = models.CharField(max_length=255)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    status = models.CharField(max_length=10)
+
+    class Meta:
+        managed = False
+        db_table = 'table_management'
         unique_together = (('database_id', 'table_name'),)
